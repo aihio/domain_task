@@ -14,12 +14,11 @@ interface DomainPriceService {
 }
 
 @Service
-class WhoIsXmlInfoService : DomainInfoService {
+class WhoIsXmlInfoService constructor(val restTemplate: RestTemplate) : DomainInfoService {
     @Value("\${whoisxmlapi.apiKey:}")
     lateinit var apiKey: String
 
     override fun getDomainInfo(domainName: String): DomainInfoDTO {
-        val restTemplate = RestTemplate()
 
         val domainInfo = restTemplate.getForObject(
             "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=$apiKey&domainName=$domainName&outputFormat=json",
