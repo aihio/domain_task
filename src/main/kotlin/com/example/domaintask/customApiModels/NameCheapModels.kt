@@ -1,35 +1,36 @@
 package com.example.domaintask.customApiModels
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.math.BigDecimal
 
-data class Price(var price: String?)
+data class Price(var price: BigDecimal?, var duration: Int)
 
 
 data class Product(
     @JsonProperty("Price")
-    var price: List<Price>? = null,
-    var name: String? = null
+    var price: List<Price>?,
+    var name: String?
 )
 
 data class ProductCategory(
     @JsonProperty("Product")
-    var product: List<Product>? = null,
-    var name: String? = null
+    var product: List<Product>?,
+    var name: String?
 )
 
 
 data class ProductType
-    (var productCategory: ProductCategory? = null)
+    (var productCategory: ProductCategory?)
 
 data class UserGetPricingResult
-    (var productType: ProductType? = null)
+    (var productType: ProductType?)
 
 
 data class CommandResponse
-    (var userGetPricingResult: UserGetPricingResult? = null)
+    (var userGetPricingResult: UserGetPricingResult?)
 
 
 data class ApiResponse(
-    var commandResponse: CommandResponse? = null
+    var commandResponse: CommandResponse?
 )
 
