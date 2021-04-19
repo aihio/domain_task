@@ -1,13 +1,10 @@
 package com.example.domaintask
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.cache.annotation.EnableCaching
 
 
 @SpringBootApplication
@@ -17,15 +14,8 @@ fun main(args: Array<String>) {
     runApplication<DomainTaskApplication>(*args)
 }
 
-@RestController
-class DomainInfoApi(val domainInfoInfoService: DomainInfoService) {
+fun <T : Any> T.logger(): Logger = LoggerFactory.getLogger(javaClass)
 
-    @GetMapping(path = ["/api/getDomainInfo"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(code = HttpStatus.OK)
-    fun getDomainInfo(@RequestParam domainName: String): DomainInfoDTO {
-        return domainInfoInfoService.getDomainInfo(domainName)
-    }
-}
 
 
 

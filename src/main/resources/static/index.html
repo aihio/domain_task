@@ -19,15 +19,16 @@
 
 <script>
 $( "form" ).submit(function( event ) {
-
+    $( "span" ).hide()
     $.getJSON("/api/getDomainInfo?domainName=" +  $( "input" ).first().val() , function(data){
 
-      $( "span" ).text("Domain info:" + JSON.stringify(data)).show();
+    $( "span" ).text("Domain info:" + JSON.stringify(data)).show();
 
   }).fail(function(jqXHR, textStatus, errorThrown) {  $( "span" ).text(jqXHR.responseText).show();; });
 
   event.preventDefault();
 });
+
 </script>
 
 
