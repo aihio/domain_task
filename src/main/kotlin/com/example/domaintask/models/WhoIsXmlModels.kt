@@ -2,15 +2,16 @@ package com.example.domaintask.models
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDateTime
 
 /**
  * Models for whoisxmlapi.com
  * @see <a href="whoisxmlapi.com">whoisxmlapi.com</a>
  */
-data class Root(@JsonProperty("WhoisRecord") var whoisRecord: WhoisRecord? = null)
+data class Root(@JsonProperty("WhoisRecord") val whoisRecord: WhoisRecord?)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class WhoisRecord(var registrarName: String?, var registryData: RegistryData?)
+data class WhoisRecord(val registrarName: String?, val registryData: RegistryData?)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class RegistryData(var expiresDate: String? = null)
+data class RegistryData(val expiresDate: LocalDateTime?)

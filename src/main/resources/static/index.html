@@ -4,17 +4,28 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Domain Info Index Page</title>
+    <style type="text/css">
+        body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+span{
+    text-align: center;
+}
+    </style>
 </head>
 <body>
 
-<p>Type domain name to check.</p>
+<p>Type domain name to check:</p>
 <form action="/api/getDomainInfo">
     <div>
-        <input type="text" name="domainName">
+        <input type="text" name="domainName" value="google.com">
         <input type="submit">
     </div>
 </form>
-
+<p></p>
 <span></span>
 
 <script>
