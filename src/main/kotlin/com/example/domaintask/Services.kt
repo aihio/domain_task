@@ -60,10 +60,13 @@ class WhoIsXmlInfoService constructor(val restTemplate: RestTemplate) : DomainIn
     @Value("\${whoisxmlapi.apiKey:}")
     lateinit var apiKey: String
 
+    @Value("\${whoisxmlapi.api.uri:}")
+    lateinit var serviceUri: String
+
     override fun getDomainInfo(domainName: String): DomainInfoDTO {
         logger().info("Getting domain info for $domainName")
         val domainInfo: Root? = restTemplate.getForObject(
-            "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=$apiKey&domainName=$domainName&outputFormat=json",
+            "$serviceUri/WhoisService?apiKey=$apiKey&domainName=$domainName&outputFormat=json",
             Root::class.java
         )
 
@@ -75,12 +78,12 @@ class WhoIsXmlInfoService constructor(val restTemplate: RestTemplate) : DomainIn
 }
 
 @Service
-class NamecheapService constructor(val cacheService: NamecheapPricesInfoService) :
+class NamecheapService constructor(val pricesInfoService: NamecheapPricesInfoService) :
     DomainPriceService {
 
     override fun getDomainPrice(domainName: String): BigDecimal? {
 
-        val domainPrices = cacheService.getPriceInfo()
+        val domainPrices = pricesInfoService.getPriceInfo()
 
         val kotlinXmlMapper = XmlMapper(JacksonXmlModule().apply {
             setDefaultUseWrapper(false)
@@ -124,11 +127,14 @@ class NamecheapPricesInfoService(val restTemplate: RestTemplate) {
     @Value("\${namecheap.apiKey:}")
     lateinit var apiKey: String
 
+    @Value("\${namecheap.api.uri:}")
+    lateinit var apiUri: String
+
     @Cacheable("prices")
     fun getPriceInfo(): String? {
         logger().info("Getting domain price")
         return restTemplate.getForObject(
-            "https://api.sandbox.namecheap.com/xml.response?ApiUser=$userName&ApiKey=$apiKey&UserName=$userName" +
+            "$apiUri/xml.response?ApiUser=$userName&ApiKey=$apiKey&UserName=$userName" +
                     "&Command=namecheap.users.getPricing&ClientIp=$clientIp&ProductType=DOMAIN&ProductCategory=DOMAINS&ActionName=REGISTER",
             String::class.java
         )
