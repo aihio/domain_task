@@ -8,13 +8,12 @@ import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import java.math.BigDecimal
 import org.springframework.web.server.ResponseStatusException
-import org.springframework.cache.annotation.CacheEvict
 
 
 interface DomainInfoService {
@@ -22,7 +21,7 @@ interface DomainInfoService {
 }
 
 interface DomainPriceService {
-    fun getDomainPrice(domainName: String): BigDecimal?
+    fun getDomainPrice(domainName: String): DomainPriceDTO?
 }
 
 @Service
@@ -30,7 +29,7 @@ class DomainService(val domainInfoService: DomainInfoService, val domainPriceSer
 
     fun getDomainInfo(domainName: String): DomainDTO {
 
-        var domainPrice: BigDecimal? = null
+        var domainPrice: DomainPriceDTO? = null
 
         validateDomain(domainName)
 
@@ -41,7 +40,7 @@ class DomainService(val domainInfoService: DomainInfoService, val domainPriceSer
             domainPrice = domainPriceService.getDomainPrice(domainName)
         }
 
-        return DomainDTO(domainInfo.registrarName, domainInfo.expiresDate, domainPrice)
+        return DomainDTO(domainInfo.registrarName, domainInfo.expiresDate, domainPrice?.price, domainPrice?.currency)
     }
 
     private fun validateDomain(domainName: String) {
@@ -87,7 +86,7 @@ class WhoIsXmlInfoService constructor(val restTemplate: RestTemplate) : DomainIn
 class NamecheapService constructor(val pricesInfoService: NamecheapPricesInfoService) :
     DomainPriceService {
 
-    override fun getDomainPrice(domainName: String): BigDecimal? {
+    override fun getDomainPrice(domainName: String): DomainPriceDTO {
 
         val domainPrices = pricesInfoService.getPriceInfo()
 
@@ -113,11 +112,12 @@ class NamecheapService constructor(val pricesInfoService: NamecheapPricesInfoSer
             logger().error(apiResponse.errors.error)
             throw  ResponseStatusException(HttpStatus.BAD_REQUEST, apiResponse.errors.error)
         }
-        val price = apiResponse.commandResponse?.userGetPricingResult?.productType?.productCategory
+        val prices = apiResponse.commandResponse?.userGetPricingResult?.productType?.productCategory
             ?.product?.filter { product -> domainName.endsWith("." + product.name.toString()) }?.toList()
 
-        if (!price.isNullOrEmpty()) {
-            return price[0].price?.get(0)?.price
+        if (!prices.isNullOrEmpty()) {
+            val priceEntry = prices[0].price?.get(0)
+            return DomainPriceDTO(price = priceEntry?.price, currency = priceEntry?.currency)
         }
         throw  ResponseStatusException(HttpStatus.NOT_FOUND, "Domain price for $domainName not found!")
     }

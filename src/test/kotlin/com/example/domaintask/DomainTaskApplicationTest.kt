@@ -3,10 +3,6 @@ package com.example.domaintask
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.hamcrest.Matchers.containsString
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -14,6 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 
 @SpringBootTest(
@@ -120,7 +120,8 @@ internal class DomainTaskApplicationTest {
         )
 
         this.mockMvc.perform(get("/api/getDomainInfo?domainName=$testDomain")).andDo(print())
-            .andExpect(status().isOk).andExpect(content().string(containsString("{\"price\":55.98}")))
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString("""{"price":55.98,"currency":"USD"}""")))
     }
 
     @Test
@@ -148,4 +149,28 @@ internal class DomainTaskApplicationTest {
             .andExpect(status().isBadRequest)
     }
 
+    @Test
+    fun `controller should return no content error for no XML`() {
+        val testDomain = "iexist.test"
+        this.pricesInfoService.evictAllCacheValues()
+        stubFor(
+            get(urlPathEqualTo("/WhoisService"))
+                .willReturn(
+                    aResponse().withHeader(TestingConstants.CONTENT_TYPE, TestingConstants.APPLICATION_JSON)
+                        .withBody("{}")
+                )
+        )
+
+        stubFor(
+            get(urlPathEqualTo("/xml.response"))
+                .willReturn(
+                    aResponse().withHeader(TestingConstants.CONTENT_TYPE, "text/xml").withBody(
+                        ""
+                    )
+                )
+        )
+
+        this.mockMvc.perform(get("/api/getDomainInfo?domainName=$testDomain")).andDo(print())
+            .andExpect(status().isNoContent)
+    }
 }

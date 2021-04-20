@@ -11,7 +11,7 @@ import java.time.LocalDate
 data class Root(@JsonProperty("WhoisRecord") val whoisRecord: WhoisRecord?)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class WhoisRecord(val registrarName: String?, val registryData: RegistryData?)
+data class WhoisRecord(val registrarName: String?, val registryData: RegistryData?, val dataError: String?)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class RegistryData(val expiresDate: LocalDate?)

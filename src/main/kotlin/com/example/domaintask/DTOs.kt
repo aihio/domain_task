@@ -9,9 +9,15 @@ data class DomainInfoDTO(
     val expiresDate: LocalDate?
 )
 
+data class DomainPriceDTO(
+    val price: BigDecimal?,
+    val currency: String?
+)
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DomainDTO(
     val registrarName: String?,
     val expiresDate: LocalDate?,
-    val price: BigDecimal?
+    val price: BigDecimal?,
+    val currency: String?
 )
