@@ -12,12 +12,12 @@ Execute the following command:
 
 #### Option 1:
 
-1. Set JASYPT_ENCRYPTOR_PASSWORD=[password] environmental variable
+1. Set JASYPT_ENCRYPTOR_PASSWORD=newsecretpass environmental variable
 2. Run <code>java -jar domaintask-0.0.1-SNAPSHOT.jar</code>
 
 #### Option 2:
 
-<pre><code>./gradlew bootRun --args='--jasypt.encryptor.password=[password]'</code></pre>
+<pre><code>./gradlew bootRun --args='--jasypt.encryptor.password=newsecretpass'</code></pre>
 
 ### How to encrypt/decrypt with Jasypt
 
