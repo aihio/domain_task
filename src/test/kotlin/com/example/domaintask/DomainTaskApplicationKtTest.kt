@@ -37,7 +37,7 @@ internal class DomainTaskApplicationKtTest {
             get(urlPathEqualTo("/WhoisService"))
                 .willReturn(
                     aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(TestingConstants.JSON_WITH_NAME_AND_DATE)
+                        .withBody(TestingConstants.RAW_JSON_WITH_NAME_AND_DATE)
                 )
         )
 

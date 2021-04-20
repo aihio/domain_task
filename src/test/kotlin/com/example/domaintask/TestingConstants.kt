@@ -17,7 +17,7 @@ object TestingConstants {
 	</CommandResponse>
 </ApiResponse>"""
 
-    const val JSON_WITH_NAME_AND_DATE = """
+    const val RAW_JSON_WITH_NAME_AND_DATE = """
             {
                  "WhoisRecord": {
                      "registrarName": "ICANN",

@@ -65,10 +65,15 @@ class WhoIsXmlInfoService constructor(val restTemplate: RestTemplate) : DomainIn
 
     override fun getDomainInfo(domainName: String): DomainInfoDTO {
         logger().info("Getting domain info for $domainName")
-        val domainInfo: Root? = restTemplate.getForObject(
-            "$serviceUri/WhoisService?apiKey=$apiKey&domainName=$domainName&outputFormat=json",
-            Root::class.java
-        )
+        val domainInfo: Root? = try {
+            restTemplate.getForObject(
+                "$serviceUri/WhoisService?apiKey=$apiKey&domainName=$domainName&outputFormat=json",
+                Root::class.java
+            )
+        } catch (e: Exception) {
+            logger().error("DomainInfo service error: $e")
+            throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "$e")
+        }
 
         return DomainInfoDTO(
             domainInfo?.whoisRecord?.registrarName,
