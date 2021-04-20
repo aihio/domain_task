@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.math.BigDecimal
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.cache.annotation.CacheEvict
 
 
 interface DomainInfoService {
@@ -90,21 +91,27 @@ class NamecheapService constructor(val pricesInfoService: NamecheapPricesInfoSer
 
         val domainPrices = pricesInfoService.getPriceInfo()
 
-        val kotlinXmlMapper = XmlMapper(JacksonXmlModule().apply {
-            setDefaultUseWrapper(false)
-        }).registerKotlinModule()
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val apiResponse: ApiResponse = try {
+            val kotlinXmlMapper = XmlMapper(JacksonXmlModule().apply {
+                setDefaultUseWrapper(false)
+            }).registerKotlinModule()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-        logger().info("Parsing xml response")
-        val apiResponse = kotlinXmlMapper.readValue(
-            domainPrices,
-            ApiResponse::class.java
-        )
+            logger().info("Parsing xml response")
+            kotlinXmlMapper.readValue(
+                domainPrices,
+                ApiResponse::class.java
+            )
+        } catch (e: Exception) {
+            pricesInfoService.evictAllCacheValues()
+            throw ResponseStatusException(HttpStatus.NO_CONTENT, "Error during parsing NameCheap API response")
+        }
 
         if (apiResponse.errors != null) {
-            logger().error(apiResponse.errors.error?.text)
-            throw  ResponseStatusException(HttpStatus.BAD_REQUEST, apiResponse.errors.error?.text)
+            pricesInfoService.evictAllCacheValues()
+            logger().error(apiResponse.errors.error)
+            throw  ResponseStatusException(HttpStatus.BAD_REQUEST, apiResponse.errors.error)
         }
         val price = apiResponse.commandResponse?.userGetPricingResult?.productType?.productCategory
             ?.product?.filter { product -> domainName.endsWith("." + product.name.toString()) }?.toList()
@@ -143,7 +150,12 @@ class NamecheapPricesInfoService(val restTemplate: RestTemplate) {
                     "&Command=namecheap.users.getPricing&ClientIp=$clientIp&ProductType=DOMAIN&ProductCategory=DOMAINS&ActionName=REGISTER",
             String::class.java
         )
-
     }
+
+    @CacheEvict(value = ["prices"], allEntries = true)
+    fun evictAllCacheValues() {
+        //evicts cache
+    }
+
 }
 

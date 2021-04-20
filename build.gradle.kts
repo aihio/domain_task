@@ -25,6 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.+")
     implementation ("com.github.ben-manes.caffeine:caffeine:3.0.1")
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.27.2")

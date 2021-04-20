@@ -1,6 +1,10 @@
 package com.example.domaintask.models
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText
 import java.math.BigDecimal
 
 data class Price(val price: BigDecimal?, val duration: Int)
@@ -29,12 +33,8 @@ data class UserGetPricingResult
 data class CommandResponse
     (val userGetPricingResult: UserGetPricingResult?)
 
-class Error(
-    val text: String?
-)
-
 data class Errors(
-    val error: Error?
+    val error: String?
 )
 
 data class ApiResponse(

@@ -27,4 +27,14 @@ object TestingConstants {
                  }
             }
         """
+    const val CONTENT_TYPE = "Content-Type"
+    const val APPLICATION_JSON = "application/json"
+    const val XML_WITH_USERNAME_ERROR =
+        """<?xml version="1.0" encoding="utf-8"?>
+<ApiResponse Status="ERROR" xmlns="http://api.namecheap.com/xml.response">
+    <Errors>
+        <Error Number="1019103">Username does not exist</Error>
+    </Errors>
+</ApiResponse>"""
 }
+
