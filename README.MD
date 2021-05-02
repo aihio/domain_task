@@ -6,6 +6,13 @@ Execute the following command:
 <pre><code>./gradlew build
 </code></pre>
 
+### How to run tests:
+
+Execute the following command:
+<pre><code>./gradlew test
+</code></pre>
+
+
 ### How to start the app:
 
 <i>Important note: application.properties file is encrypted with Jasypt</i>
