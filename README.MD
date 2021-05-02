@@ -67,3 +67,4 @@ Sample response:
 * Improve exception handling
 * Replace in-memory cache
 * Improve content validation
+* Improve packaging
